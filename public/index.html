@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ashmit Pai — Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Space background layers -->
+  <canvas id="starfield"></canvas>
+  <div id="nebula-layer"></div>
+  <div id="noise-overlay"></div>
+
+  <!-- Shooting stars (CSS-animated) -->
+  <div class="shooting-stars">
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+  </div>
+
+  <!-- Cursor trail canvas -->
+  <canvas id="cursor-trail"></canvas>
+
+  <!-- Custom Cursor -->
+  <div id="cursor-dot"></div>
+  <div id="cursor-glow"></div>
+
+  <!-- Floating planet (hero decoration) -->
+  <div class="planet" id="planet">
+    <div class="planet-body">
+      <div class="planet-ring"></div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header id="header">
+    <div class="header-inner">
+      <div class="header-profile" id="header-profile">
+        <img src="Images/Profile Pic.jpeg" alt="Ashmit Pai" class="header-avatar" />
+      </div>
+      <nav id="nav">
+        <a href="#hero" class="nav-link active" data-section="hero"><span data-text="Home">Home</span></a>
+        <a href="#education" class="nav-link" data-section="education"><span data-text="Education">Education</span></a>
+        <a href="#experience" class="nav-link" data-section="experience"><span data-text="Experience">Experience</span></a>
+        <a href="#projects" class="nav-link" data-section="projects"><span data-text="Projects">Projects</span></a>
+        <a href="#skills" class="nav-link" data-section="skills"><span data-text="Skills">Skills</span></a>
+        <a href="#contact" class="nav-link" data-section="contact"><span data-text="Contact">Contact</span></a>
+      </nav>
+      <button id="menu-toggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-depth-layer depth-1"></div>
+    <div class="hero-depth-layer depth-2"></div>
+    <div class="hero-depth-layer depth-3"></div>
+    <div class="hero-content">
+      <div class="hero-badge" data-animate="fade-up">
+        <span class="code-tag">&lt;</span>developer<span class="code-tag">/&gt;</span>
+      </div>
+      <h1 class="hero-name" data-split-text>Ashmit Amit Pai</h1>
+      <div class="hero-title-wrapper">
+        <span class="hero-title" id="typed-text"></span>
+        <span class="cursor-blink">|</span>
+      </div>
+      <div class="hero-links">
+        <a href="mailto:apai10@asu.edu" class="hero-btn magnetic">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <span>Email</span>
+        </a>
+        <a href="https://linkedin.com/in/ashmit-pai" target="_blank" class="hero-btn magnetic">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          <span>LinkedIn</span>
+        </a>
+        <a href="https://github.com/ashpai2504" target="_blank" class="hero-btn magnetic">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          <span>GitHub</span>
+        </a>
+      </div>
+    </div>
+    <div class="scroll-cta">
+      <span>Scroll to explore</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section id="education" class="section-reveal">
+    <div class="section-container">
+      <div class="section-label" data-animate="fade-up"><span class="section-idx">01</span><span class="section-line"></span><span class="section-tag">education</span></div>
+      <h2 class="section-title" data-split-text>Education</h2>
+      <div class="edu-hero" data-animate="scale-reveal">
+        <div class="asu-image-wrapper tilt-card">
+          <img src="Images/ASU Library Image.jpg" alt="Arizona State University" class="asu-campus-img" />
+          <div class="asu-image-overlay">
+            <h3>Arizona State University</h3>
+            <p>Fulton College of Engineering</p>
+          </div>
+        </div>
+      </div>
+      <div class="edu-cards">
+        <div class="edu-card tilt-card" data-animate="slide-left">
+          <div class="edu-card-glow"></div>
+          <div class="edu-card-accent"></div>
+          <div class="edu-card-body">
+            <div class="edu-degree">
+              <span class="degree-badge">MS</span>
+              <div>
+                <h3>Master of Science</h3>
+                <p class="edu-field">Computer Science</p>
+                <p class="edu-school">Arizona State University</p>
+              </div>
+            </div>
+            <div class="edu-meta">
+              <span class="edu-date">Expected December 2026</span>
+              <span class="edu-gpa">GPA: 3.78 / 4.00</span>
+            </div>
+            <div class="edu-coursework">
+              <button class="coursework-toggle">Relevant Coursework <span class="toggle-arrow">&#9662;</span></button>
+              <div class="coursework-list">
+                <span>Natural Language Processing</span><span>Agentic AI</span>
+                <span>Data Processing at Scale</span><span>Data Mining</span>
+                <span>Robotics</span><span>Data Visualization</span>
+                <span>Knowledge Representation & Reasoning</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="edu-card tilt-card" data-animate="slide-right">
+          <div class="edu-card-glow"></div>
+          <div class="edu-card-accent"></div>
+          <div class="edu-card-body">
+            <div class="edu-degree">
+              <span class="degree-badge">BS</span>
+              <div>
+                <h3>Bachelor of Science</h3>
+                <p class="edu-field">Computer Science</p>
+                <p class="edu-school">Arizona State University</p>
+              </div>
+            </div>
+            <div class="edu-meta">
+              <span class="edu-date">Graduated December 2025</span>
+              <span class="edu-gpa">GPA: 3.58 / 4.00</span>
+            </div>
+            <div class="edu-coursework">
+              <button class="coursework-toggle">Relevant Coursework <span class="toggle-arrow">&#9662;</span></button>
+              <div class="coursework-list">
+                <span>Data Structures and Algorithms</span><span>Machine Learning</span>
+                <span>Information Assurance</span><span>Mobile App Development (iOS)</span>
+                <span>Theoretical Computer Science</span><span>Operating Systems</span>
+                <span>Distributed Software Development</span><span>Statistics</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience" class="section-reveal">
+    <div class="section-container">
+      <div class="section-label" data-animate="fade-up"><span class="section-idx">02</span><span class="section-line"></span><span class="section-tag">experience</span></div>
+      <h2 class="section-title" data-split-text>Experience</h2>
+      <div class="timeline">
+        <div class="timeline-line"></div>
+        <div class="timeline-item" data-animate="timeline-reveal">
+          <div class="timeline-dot"></div>
+          <div class="timeline-card tilt-card">
+            <div class="edu-card-glow"></div>
+            <div class="timeline-card-front">
+              <div class="exp-header">
+                <h3>Research Aide</h3>
+                <span class="exp-date">Feb 2025 – Jun 2025</span>
+              </div>
+              <p class="exp-company">School of Geographical Sciences and Urban Planning</p>
+              <p class="exp-location">Arizona State University · Tempe, Arizona</p>
+              <span class="exp-expand-hint"><span class="hint-icon">+</span> Click to expand</span>
+            </div>
+            <div class="timeline-card-details">
+              <ul>
+                <li>Conducted comprehensive geospatial analysis using Python for statistical modeling and regression analysis, developing automated data processing pipelines.</li>
+                <li>Created interactive visualization maps using ArcGIS Pro while applying systematic testing and validation methods across multiple socioeconomic datasets.</li>
+              </ul>
+              <div class="exp-tags"><span>Python</span><span>ArcGIS Pro</span><span>Statistical Modeling</span><span>Geospatial Analysis</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item" data-animate="timeline-reveal">
+          <div class="timeline-dot"></div>
+          <div class="timeline-card tilt-card">
+            <div class="edu-card-glow"></div>
+            <div class="timeline-card-front">
+              <div class="exp-header">
+                <h3>AI Developer Intern</h3>
+                <span class="exp-date">May 2024 – Jul 2024</span>
+              </div>
+              <p class="exp-company">NuRe FutureTech</p>
+              <p class="exp-location">Navi Mumbai, India</p>
+              <span class="exp-expand-hint"><span class="hint-icon">+</span> Click to expand</span>
+            </div>
+            <div class="timeline-card-details">
+              <ul>
+                <li>Designed ML classification model (scikit-learn, pandas, NumPy) for talent acquisition, achieving 25% reduction in candidate screening time across 10,000+ records.</li>
+                <li>Implemented model validation framework with cross-validation and hyperparameter tuning. Deployed production solution using Flask adopted across enterprise clients.</li>
+              </ul>
+              <div class="exp-tags"><span>scikit-learn</span><span>pandas</span><span>NumPy</span><span>Flask</span><span>ML Classification</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS (Horizontal Gallery) -->
+  <section id="projects" class="section-reveal">
+    <div class="section-container">
+      <div class="section-label" data-animate="fade-up"><span class="section-idx">03</span><span class="section-line"></span><span class="section-tag">projects</span></div>
+      <h2 class="section-title" data-split-text>Projects</h2>
+    </div>
+    <div class="projects-horizontal-wrapper">
+      <div class="projects-horizontal-track" id="projects-track">
+        <div class="project-slide" data-project="0">
+          <div class="project-slide-img" style="background-image:url('https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&q=80')"></div>
+          <div class="project-slide-content">
+            <span class="project-num">01</span>
+            <h3>AI Salon Booking System</h3>
+            <p>GPT-4 powered dual-interface booking with voice, SMS & web chat. Real-time scheduling with multi-stylist availability.</p>
+            <div class="project-tags"><span>React</span><span>Next.js</span><span>FastAPI</span><span>GPT-4o</span><span>Twilio</span></div>
+          </div>
+        </div>
+        <div class="project-slide" data-project="1">
+          <div class="project-slide-img" style="background-image:url('https://images.unsplash.com/photo-1461896836934-bd45ba8fcf9b?w=800&q=80')"></div>
+          <div class="project-slide-content">
+            <span class="project-num">02</span>
+            <h3>Gamebloc</h3>
+            <p>Real-time sports social platform with live match chats for 100+ concurrent games. Per-game chat, persistent history, and social profiles.</p>
+            <div class="project-tags"><span>Next.js</span><span>React</span><span>MongoDB</span><span>Socket.IO</span></div>
+          </div>
+        </div>
+        <div class="project-slide" data-project="2">
+          <div class="project-slide-img" style="background-image:url('https://images.unsplash.com/photo-1615722550622-955b714ed31d?w=800&q=80')"></div>
+          <div class="project-slide-content">
+            <span class="project-num">03</span>
+            <h3>J Miller Custom Cues 3D</h3>
+            <p>Interactive Three.js application for real-time 360° visualization of pool cues with 50+ wood options and e-commerce integration.</p>
+            <div class="project-tags"><span>Three.js</span><span>React</span><span>Blender</span><span>3D</span></div>
+          </div>
+        </div>
+        <div class="project-slide" data-project="3">
+          <div class="project-slide-img" style="background-image:url('https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&q=80')"></div>
+          <div class="project-slide-content">
+            <span class="project-num">04</span>
+            <h3>UNLEARN-BENCH</h3>
+            <p>Bias unlearning benchmark evaluating five methods across 7 demographic datasets on Phi-3.5, Qwen2.5, Mamba — achieving over 40% bias reduction.</p>
+            <div class="project-tags"><span>PyTorch</span><span>HuggingFace</span><span>Python</span></div>
+          </div>
+        </div>
+        <div class="project-slide" data-project="4">
+          <div class="project-slide-img" style="background-image:url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&q=80')"></div>
+          <div class="project-slide-content">
+            <span class="project-num">05</span>
+            <h3>Real-Time Graph Analytics</h3>
+            <p>Distributed graph processing of NYC taxi data with Neo4j + PageRank, scaled to 1100+ msgs/sec through Kafka and Kubernetes.</p>
+            <div class="project-tags"><span>Neo4j</span><span>Spark</span><span>Kafka</span><span>K8s</span><span>Docker</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills" class="section-reveal">
+    <div class="section-container">
+      <div class="section-label" data-animate="fade-up"><span class="section-idx">04</span><span class="section-line"></span><span class="section-tag">skills</span></div>
+      <h2 class="section-title" data-split-text>Skills</h2>
+      <div class="skills-grid" id="skills-grid"></div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="section-reveal">
+    <div class="section-container contact-container">
+      <div class="section-label" data-animate="fade-up"><span class="section-idx">05</span><span class="section-line"></span><span class="section-tag">contact</span></div>
+      <h2 class="contact-heading" data-split-contact>Let's Build Something Great</h2>
+      <p class="contact-sub" data-animate="fade-up">Open to opportunities, collaborations, and conversations about technology.</p>
+      <div class="contact-links" data-animate="stagger-up">
+        <a href="mailto:apai10@asu.edu" class="contact-card magnetic tilt-card">
+          <div class="edu-card-glow"></div>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <span>apai10@asu.edu</span>
+        </a>
+        <a href="tel:+16232758757" class="contact-card magnetic tilt-card">
+          <div class="edu-card-glow"></div>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.88.37 1.75.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c1.06.33 1.93.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span>(623) 275-8757</span>
+        </a>
+        <a href="https://linkedin.com/in/ashmit-pai" target="_blank" class="contact-card magnetic tilt-card">
+          <div class="edu-card-glow"></div>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          <span>LinkedIn</span>
+        </a>
+        <a href="https://github.com/ashpai2504" target="_blank" class="contact-card magnetic tilt-card">
+          <div class="edu-card-glow"></div>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          <span>GitHub</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Profile Lightbox -->
+  <div id="profile-lightbox" class="profile-lightbox">
+    <div class="profile-lightbox-backdrop"></div>
+    <div class="profile-lightbox-inner">
+      <img src="Images/Profile Pic.jpeg" alt="Ashmit Pai" />
+      <p>Ashmit Amit Pai</p>
+    </div>
+  </div>
+
+  <footer>
+    <p><span class="code-tag">&lt;</span> Built with passion by Ashmit Pai <span class="code-tag">/&gt;</span> &copy; 2026</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
