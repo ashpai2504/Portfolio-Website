@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <div id="space-bg"></div>
   <canvas id="starfield"></canvas>
   <div id="nebula-layer"></div>
 
@@ -131,23 +132,23 @@
       <div class="projects-horizontal-track" id="projects-track">
         <div class="project-slide" data-project="0">
           <div class="project-slide-img" style="background-image:url('https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&q=80')"></div>
-          <div class="project-slide-content"><span class="project-num">01</span><h3>AI Salon Booking System</h3><p>GPT-4 powered dual-interface booking with voice, SMS & web chat. Real-time scheduling with multi-stylist availability.</p><div class="project-tags"><span>React</span><span>Next.js</span><span>FastAPI</span><span>GPT-4o</span><span>Twilio</span></div></div>
+          <div class="project-slide-content"><span class="project-num">01</span><h3>AI Salon Booking System</h3><p>GPT-4 powered dual-interface booking with voice, SMS & web chat. Real-time scheduling with multi-stylist availability and conversational AI.</p><div class="project-tags"><span>React</span><span>Next.js</span><span>FastAPI</span><span>GPT-4o</span><span>Twilio</span><span>PostgreSQL</span></div></div>
         </div>
         <div class="project-slide" data-project="1">
           <div class="project-slide-img" style="background-image:url('https://images.unsplash.com/photo-1461896836934-bd45ba8fcf9b?w=800&q=80')"></div>
-          <div class="project-slide-content"><span class="project-num">02</span><h3>Gamebloc</h3><p>Real-time sports social platform with live match chats for 100+ concurrent games. Per-game chat, persistent history, and social profiles.</p><div class="project-tags"><span>Next.js</span><span>React</span><span>MongoDB</span><span>Socket.IO</span></div></div>
+          <div class="project-slide-content"><span class="project-num">02</span><h3>Gamebloc</h3><p>Real-time sports social platform with live match chats for 100+ concurrent games. Per-game chat, persistent history, social profiles, and DMs.</p><div class="project-tags"><span>Next.js</span><span>React</span><span>Node.js</span><span>MongoDB</span><span>Socket.IO</span></div></div>
         </div>
         <div class="project-slide" data-project="2">
           <div class="project-slide-img" style="background-image:url('https://images.unsplash.com/photo-1615722550622-955b714ed31d?w=800&q=80')"></div>
-          <div class="project-slide-content"><span class="project-num">03</span><h3>J Miller Custom Cues 3D</h3><p>Interactive Three.js application for real-time 360° visualization of pool cues with 50+ wood options and e-commerce integration.</p><div class="project-tags"><span>Three.js</span><span>React</span><span>Blender</span><span>3D</span></div></div>
+          <div class="project-slide-content"><span class="project-num">03</span><h3>J Miller Custom Cues 3D</h3><p>Capstone Project — Interactive Three.js app for real-time 360° visualization and customization of pool cues with 50+ wood options and e-commerce.</p><div class="project-tags"><span>Three.js</span><span>React</span><span>Blender</span><span>HTML/CSS</span></div></div>
         </div>
         <div class="project-slide" data-project="3">
           <div class="project-slide-img" style="background-image:url('https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&q=80')"></div>
-          <div class="project-slide-content"><span class="project-num">04</span><h3>UNLEARN-BENCH</h3><p>Bias unlearning benchmark evaluating five methods across 7 demographic datasets on Phi-3.5, Qwen2.5, Mamba — achieving over 40% bias reduction.</p><div class="project-tags"><span>PyTorch</span><span>HuggingFace</span><span>Python</span></div></div>
+          <div class="project-slide-content"><span class="project-num">04</span><h3>UNLEARN-BENCH</h3><p>Bias unlearning benchmark evaluating 5 methods across 7 demographic datasets on Phi-3.5, Qwen2.5, Mamba — over 40% bias reduction.</p><div class="project-tags"><span>Python</span><span>PyTorch</span><span>HuggingFace</span><span>Scikit-learn</span></div></div>
         </div>
         <div class="project-slide" data-project="4">
           <div class="project-slide-img" style="background-image:url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&q=80')"></div>
-          <div class="project-slide-content"><span class="project-num">05</span><h3>Real-Time Graph Analytics</h3><p>Distributed graph processing of NYC taxi data with Neo4j + PageRank, scaled to 1100+ msgs/sec through Kafka and Kubernetes.</p><div class="project-tags"><span>Neo4j</span><span>Spark</span><span>Kafka</span><span>K8s</span><span>Docker</span></div></div>
+          <div class="project-slide-content"><span class="project-num">05</span><h3>Real-Time Graph Analytics</h3><p>Distributed graph processing of NYC taxi data with Neo4j + PageRank, scaled to 1100+ msgs/sec through Kafka and Kubernetes microservices.</p><div class="project-tags"><span>Python</span><span>Neo4j</span><span>Spark</span><span>Kafka</span><span>K8s</span><span>Docker</span></div></div>
         </div>
       </div>
     </div>
@@ -160,7 +161,8 @@
       <button class="project-modal-close">&times;</button>
       <img class="project-modal-img" src="" alt="" />
       <h3 class="project-modal-title"></h3>
-      <p class="project-modal-desc"></p>
+      <div class="project-modal-desc"></div>
+      <div class="project-modal-links"></div>
       <div class="project-modal-tags"></div>
     </div>
   </div>
@@ -183,9 +185,8 @@
           <div class="imac-zoomed-camera"></div>
           <div class="imac-zoomed-screen" id="imac-zoomed-screen"></div>
         </div>
-        <div class="imac-zoomed-chin">
-          <div class="imac-chin-logo"></div>
-        </div>
+        <div class="imac-zoomed-chin"><div class="imac-chin-logo"></div></div>
+        <div class="imac-zoomed-stand"><div class="imac-zoomed-stand-neck"></div><div class="imac-zoomed-stand-base"></div></div>
       </div>
     </div>
   </div>

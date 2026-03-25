@@ -18,11 +18,52 @@ const SKILLS_DATA = [
 ];
 
 const PROJECTS_DATA = [
-  { title: 'AI Salon Booking System', desc: 'GPT-4 powered dual-interface booking with voice, SMS & web chat. Real-time scheduling with multi-stylist availability.', tags: ['React','Next.js','FastAPI','GPT-4o','Twilio'], img: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&q=80' },
-  { title: 'Gamebloc', desc: 'Real-time sports social platform with live match chats for 100+ concurrent games. Per-game chat, persistent history, and social profiles.', tags: ['Next.js','React','MongoDB','Socket.IO'], img: 'https://images.unsplash.com/photo-1461896836934-bd45ba8fcf9b?w=800&q=80' },
-  { title: 'J Miller Custom Cues 3D', desc: 'Interactive Three.js application for real-time 360° visualization of pool cues with 50+ wood options and e-commerce integration.', tags: ['Three.js','React','Blender','3D'], img: 'https://images.unsplash.com/photo-1615722550622-955b714ed31d?w=800&q=80', cueProject: true },
-  { title: 'UNLEARN-BENCH', desc: 'Bias unlearning benchmark evaluating five methods across 7 demographic datasets on Phi-3.5, Qwen2.5, Mamba — achieving over 40% bias reduction.', tags: ['PyTorch','HuggingFace','Python'], img: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&q=80' },
-  { title: 'Real-Time Graph Analytics', desc: 'Distributed graph processing of NYC taxi data with Neo4j + PageRank, scaled to 1100+ msgs/sec through Kafka and Kubernetes.', tags: ['Neo4j','Spark','Kafka','K8s','Docker'], img: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&q=80' }
+  {
+    title: 'AI Salon Booking System',
+    bullets: [
+      'Collaborated to build dual-interface booking platform using GPT-4 customer agents (Twilio Voice/SMS + web chat) for natural language appointments with speech-to-text, and autonomous owner agent for schedule/promotion management via conversational AI.',
+      'Engineered real-time scheduling with promotion system (combo promos, trigger-based eligibility), async backend managing multi-stylist availability, preferred style options, automated confirmations, schedule calendar and time zone aware slot collision prevention.'
+    ],
+    tags: ['React','Next.js','Tailwind','FastAPI','PostgreSQL','Docker','GPT-4o mini','Twilio'],
+    img: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&q=80'
+  },
+  {
+    title: 'Gamebloc — Live Sports Social Platform',
+    bullets: [
+      'Built a real-time sports social platform where fans can join live match chats for 100+ concurrent games across Soccer, NFL, NCAA Football, Basketball, etc. with messages persisting even after the match ends so users can still read and respond to game-time reactions.',
+      'Designed a full user profile system with personalized favorite teams, auto-tracked team live statistics, and a direct messaging feature so fans can connect and keep sharing their opinions during and after the match. The only platform combining per-game live chat, persistent history, and social profiles across multiple sports.'
+    ],
+    tags: ['Next.js','React','Node.js','MongoDB','Socket.IO','ESPN API'],
+    img: 'https://images.unsplash.com/photo-1461896836934-bd45ba8fcf9b?w=800&q=80'
+  },
+  {
+    title: 'J Miller Custom Cues 3D Modeling Software',
+    subtitle: 'Capstone Project',
+    bullets: [
+      'Developed an interactive Three.js application enabling real-time 360° visualization and customization of pool cues with 50+ wood options, seamlessly integrating with an e-commerce platform to enhance customer purchasing experience.',
+      'Implemented advanced camera controls and texture mapping systems allowing customers to visualize customized pool cue designs from any angle and viewing breakdown of components, increasing conversion rates and reducing product returns.'
+    ],
+    tags: ['Three.js','React','HTML/CSS','Blender'],
+    img: 'https://images.unsplash.com/photo-1615722550622-955b714ed31d?w=800&q=80'
+  },
+  {
+    title: 'UNLEARN-BENCH: Bias Unlearning Benchmark',
+    bullets: [
+      'Evaluated five approximate unlearning methods (Task Vector Negation, PCGU, Gradient Ascent, LoRA, NPO) across 7 diverse demographic datasets on models Phi-3.5, Qwen2.5, Mamba.',
+      'Demonstrated substantial bias score reductions across multiple demographic categories with some techniques achieving over 40% improvement and identified trade-offs between bias mitigation and model fluency using contrastive loss and regularization techniques.'
+    ],
+    tags: ['Python','PyTorch','HuggingFace','NumPy','Pandas','Scikit-learn'],
+    img: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&q=80'
+  },
+  {
+    title: 'Scalable Real-Time Graph Analytics System',
+    bullets: [
+      'Mapped and analyzed NYC taxi trip data through a graph processing system using Neo4j, running PageRank and BFS algorithms to identify important pickup/drop-off hubs and find optimal travel routes.',
+      'Scaled the system with Apache Spark and Kubernetes into a distributed pipeline processing 1100+ messages per second through Kafka, enabling real-time graph analytics and showing how microservices can keep the system fast, reliable and fault tolerant.'
+    ],
+    tags: ['Python','Neo4j','Apache Spark','Kubernetes','Kafka','Docker'],
+    img: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&q=80'
+  }
 ];
 
 /* ============================================
@@ -43,7 +84,7 @@ gsap.registerPlugin(ScrollTrigger);
   const ctx = canvas.getContext('2d');
   let w, h, scrollY = 0, dpr = 1;
 
-  const STAR_COUNT = 200;
+  const STAR_COUNT = 280;
   let stars = [];
 
   window.addEventListener('scroll', () => { scrollY = window.scrollY; }, { passive: true });
@@ -58,18 +99,21 @@ gsap.registerPlugin(ScrollTrigger);
 
   function createStars() {
     stars = [];
-    const colors = [[255,255,240],[245,200,66],[155,109,255],[255,140,66]];
-    for (let i = 0; i < STAR_COUNT; i++) {
-      stars.push({
-        x: Math.random() * w,
-        y: Math.random() * h * 4,
-        r: Math.random() * 1.4 + 0.2,
-        speed: Math.random() * 0.08 + 0.01,
-        col: colors[Math.floor(Math.random() * colors.length)],
-        alpha: Math.random() * 0.6 + 0.3,
-        twinkleSpeed: Math.random() * 0.015 + 0.003,
-        twinklePhase: Math.random() * 6.28
-      });
+    const farColors  = [[255,255,250],[240,240,255],[255,245,230]];
+    const midColors  = [[245,200,66],[255,180,100],[200,170,255]];
+    const nearColors = [[155,109,255],[255,140,66],[100,180,255]];
+
+    for (let i = 0; i < STAR_COUNT * 0.6; i++) {
+      const col = farColors[Math.floor(Math.random() * farColors.length)];
+      stars.push({ x: Math.random() * w, y: Math.random() * h * 4, r: Math.random() * 0.7 + 0.15, speed: Math.random() * 0.02 + 0.005, col, alpha: Math.random() * 0.5 + 0.2, twinkleSpeed: Math.random() * 0.01 + 0.002, twinklePhase: Math.random() * 6.28 });
+    }
+    for (let i = 0; i < STAR_COUNT * 0.3; i++) {
+      const col = midColors[Math.floor(Math.random() * midColors.length)];
+      stars.push({ x: Math.random() * w, y: Math.random() * h * 4, r: Math.random() * 1.2 + 0.4, speed: Math.random() * 0.05 + 0.02, col, alpha: Math.random() * 0.6 + 0.3, twinkleSpeed: Math.random() * 0.015 + 0.004, twinklePhase: Math.random() * 6.28 });
+    }
+    for (let i = 0; i < STAR_COUNT * 0.1; i++) {
+      const col = nearColors[Math.floor(Math.random() * nearColors.length)];
+      stars.push({ x: Math.random() * w, y: Math.random() * h * 4, r: Math.random() * 1.8 + 0.8, speed: Math.random() * 0.1 + 0.04, col, alpha: Math.random() * 0.7 + 0.3, twinkleSpeed: Math.random() * 0.02 + 0.005, twinklePhase: Math.random() * 6.28 });
     }
   }
 
@@ -81,7 +125,7 @@ gsap.registerPlugin(ScrollTrigger);
     for (const s of stars) {
       const rawY = (s.y - scrollY * s.speed * 2) % (h * 4);
       const drawY = rawY < 0 ? rawY + h * 4 : rawY;
-      if (drawY < -2 || drawY > h + 2) continue;
+      if (drawY < -3 || drawY > h + 3) continue;
 
       const tw = Math.sin(frame * s.twinkleSpeed + s.twinklePhase) * 0.3 + 0.7;
       const a = s.alpha * tw;
@@ -91,6 +135,16 @@ gsap.registerPlugin(ScrollTrigger);
       ctx.arc(s.x, drawY, s.r, 0, 6.28);
       ctx.fillStyle = `rgba(${r},${g},${b},${a.toFixed(2)})`;
       ctx.fill();
+
+      if (s.r > 1.5) {
+        const glow = ctx.createRadialGradient(s.x, drawY, 0, s.x, drawY, s.r * 4);
+        glow.addColorStop(0, `rgba(${r},${g},${b},${(a * 0.12).toFixed(3)})`);
+        glow.addColorStop(1, 'transparent');
+        ctx.beginPath();
+        ctx.arc(s.x, drawY, s.r * 4, 0, 6.28);
+        ctx.fillStyle = glow;
+        ctx.fill();
+      }
     }
 
     requestAnimationFrame(draw);
@@ -324,19 +378,24 @@ const projectModal = document.getElementById('project-modal');
 const modalImg = projectModal.querySelector('.project-modal-img');
 const modalTitle = projectModal.querySelector('.project-modal-title');
 const modalDesc = projectModal.querySelector('.project-modal-desc');
+const modalLinks = projectModal.querySelector('.project-modal-links');
 const modalTags = projectModal.querySelector('.project-modal-tags');
 
 function openProjectModal(idx) {
   const p = PROJECTS_DATA[idx];
   if (!p) return;
 
-  if (p.cueProject) {
-    modalImg.src = 'https://images.unsplash.com/photo-1615722550622-955b714ed31d?w=800&q=80';
-  } else {
-    modalImg.src = p.img;
-  }
+  modalImg.src = p.img;
   modalTitle.textContent = p.title;
-  modalDesc.textContent = p.desc;
+
+  let descHTML = '';
+  if (p.subtitle) descHTML += `<p style="color:var(--accent);font-size:.75rem;font-family:var(--font-mono);margin-bottom:.5rem">${p.subtitle}</p>`;
+  if (p.bullets && p.bullets.length) {
+    descHTML += '<ul>' + p.bullets.map(b => `<li>${b}</li>`).join('') + '</ul>';
+  }
+  modalDesc.innerHTML = descHTML;
+
+  modalLinks.innerHTML = '';
   modalTags.innerHTML = p.tags.map(t => `<span>${t}</span>`).join('');
   projectModal.classList.add('open');
 }
