@@ -25,16 +25,19 @@ const PROJECTS_DATA = [
       'Engineered real-time scheduling with promotion system (combo promos, trigger-based eligibility), async backend managing multi-stylist availability, preferred style options, automated confirmations, schedule calendar and time zone aware slot collision prevention.'
     ],
     tags: ['React','Next.js','Tailwind','FastAPI','PostgreSQL','Docker','GPT-4o mini','Twilio'],
-    img: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&q=80'
+    img: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&q=80',
+    website: 'https://www.convoaiservices.com',
+    github: 'https://github.com/aryan3002/Convo.git'
   },
   {
-    title: 'Gamebloc — Live Sports Social Platform',
+    title: 'Gamebloc - Live Sports Social Platform',
     bullets: [
       'Built a real-time sports social platform where fans can join live match chats for 100+ concurrent games across Soccer, NFL, NCAA Football, Basketball, etc. with messages persisting even after the match ends so users can still read and respond to game-time reactions.',
-      'Designed a full user profile system with personalized favorite teams, auto-tracked team live statistics, and a direct messaging feature so fans can connect and keep sharing their opinions during and after the match. The only platform combining per-game live chat, persistent history, and social profiles across multiple sports.'
+      'Designed a full user profile system with personalized favorite teams, auto-tracked team live statistics, and a direct messaging feature so fans can connect and keep sharing their opinions during and after the match.'
     ],
     tags: ['Next.js','React','Node.js','MongoDB','Socket.IO','ESPN API'],
-    img: 'https://images.unsplash.com/photo-1461896836934-bd45ba8fcf9b?w=800&q=80'
+    img: 'Images/Gamebloc img.png',
+    github: 'https://github.com/ashpai2504/Gamebloc'
   },
   {
     title: 'J Miller Custom Cues 3D Modeling Software',
@@ -44,7 +47,8 @@ const PROJECTS_DATA = [
       'Implemented advanced camera controls and texture mapping systems allowing customers to visualize customized pool cue designs from any angle and viewing breakdown of components, increasing conversion rates and reducing product returns.'
     ],
     tags: ['Three.js','React','HTML/CSS','Blender'],
-    img: 'https://images.unsplash.com/photo-1615722550622-955b714ed31d?w=800&q=80'
+    img: 'Images/J Miller Image.png',
+    website: 'https://www.jmillercustomcues.com'
   },
   {
     title: 'UNLEARN-BENCH: Bias Unlearning Benchmark',
@@ -53,7 +57,8 @@ const PROJECTS_DATA = [
       'Demonstrated substantial bias score reductions across multiple demographic categories with some techniques achieving over 40% improvement and identified trade-offs between bias mitigation and model fluency using contrastive loss and regularization techniques.'
     ],
     tags: ['Python','PyTorch','HuggingFace','NumPy','Pandas','Scikit-learn'],
-    img: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&q=80'
+    img: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&q=80',
+    github: 'https://github.com/sanskarsri26/UNLEARN-BENCH.git'
   },
   {
     title: 'Scalable Real-Time Graph Analytics System',
@@ -63,6 +68,40 @@ const PROJECTS_DATA = [
     ],
     tags: ['Python','Neo4j','Apache Spark','Kubernetes','Kafka','Docker'],
     img: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&q=80'
+  },
+  {
+    title: 'Axel R8 - Neighborhood Market Trend Analyzer',
+    subtitle: 'Listings, maps & market insights',
+    bullets: [
+      'Developed a full-stack iOS application for neighborhood and market trend analysis using SwiftUI, with persistent cloud data storage in Firebase (Firestore) and secure user authentication via Firebase Auth.',
+      'Implemented an end-to-end property listing workflow with photo upload to Firebase Storage, real-time listing sync, and map-based search and geocoding via MapKit and Core Location for location-aware exploration and detailed property views, with REST API integration.'
+    ],
+    tags: ['SwiftUI','Firebase','MapKit','Core Location','REST API'],
+    img: 'Images/axelr8.png',
+    imgFit: 'contain',
+    github: 'https://github.com/ashpai2504/Neighborhood-Market-Trend-Analyzer.git'
+  },
+  {
+    title: 'Email Thread Summarizer',
+    subtitle: 'AI tool for analyzing email threads',
+    bullets: [
+      'Built a Flask web application that summarizes email threads from text, PDFs, and images using AWS Bedrock Claude models, automatically extracting key decisions, stakeholders, and task statuses into structured one-page briefs.',
+      'Implemented multimodal input processing supporting three file formats with automated content extraction, integrating Claude 3.5 Sonnet through the Bedrock API for real-time AI-powered summarization and downloadable outputs.'
+    ],
+    tags: ['Python','Flask','AWS Bedrock','PyPDF2','Claude 3.5 Sonnet'],
+    img: 'Images/project-email-thread-summarizer.jpg',
+    github: 'https://github.com/ashpai2504/Email-Thread-Summarizer.git'
+  },
+  {
+    title: 'red. — Cross-Site Product Research',
+    subtitle: 'Chrome extension (MV3)',
+    bullets: [
+      'Built a Chrome extension that works on major retail sites; users change the URL with a simple red. prefix and get a floating panel that pulls together what people are saying online—including Reddit threads, Google reviews, and other public sources in one place.',
+      'The panel delivers a clear score and summary, surfaces common praise and complaints, suggests similar or alternative products, and helps compare sentiment so it is easier to decide what to buy.'
+    ],
+    tags: ['JavaScript','Chrome Extension (MV3)','OpenAI API'],
+    img: 'Images/red. Image.png',
+    github: 'https://github.com/ashpai2504/Red.-Extension-for-Product-reviews.git'
   }
 ];
 
@@ -70,8 +109,6 @@ const PROJECTS_DATA = [
    LENIS SMOOTH SCROLL
    ============================================ */
 const lenis = new Lenis({ duration: 1.2, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)), touchMultiplier: 2 });
-function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
-requestAnimationFrame(raf);
 gsap.ticker.add(time => lenis.raf(time * 1000));
 gsap.ticker.lagSmoothing(0);
 gsap.registerPlugin(ScrollTrigger);
@@ -84,7 +121,7 @@ gsap.registerPlugin(ScrollTrigger);
   const ctx = canvas.getContext('2d');
   let w, h, scrollY = 0, dpr = 1;
 
-  const STAR_COUNT = 280;
+  const STAR_COUNT = 220;
   let stars = [];
 
   window.addEventListener('scroll', () => { scrollY = window.scrollY; }, { passive: true });
@@ -100,25 +137,41 @@ gsap.registerPlugin(ScrollTrigger);
   function createStars() {
     stars = [];
     const farColors  = [[255,255,250],[240,240,255],[255,245,230]];
-    const midColors  = [[245,200,66],[255,180,100],[200,170,255]];
+    const midColors  = [[200,170,255],[255,180,100],[180,160,255]];
     const nearColors = [[155,109,255],[255,140,66],[100,180,255]];
 
-    for (let i = 0; i < STAR_COUNT * 0.6; i++) {
-      const col = farColors[Math.floor(Math.random() * farColors.length)];
-      stars.push({ x: Math.random() * w, y: Math.random() * h * 4, r: Math.random() * 0.7 + 0.15, speed: Math.random() * 0.02 + 0.005, col, alpha: Math.random() * 0.5 + 0.2, twinkleSpeed: Math.random() * 0.01 + 0.002, twinklePhase: Math.random() * 6.28 });
-    }
-    for (let i = 0; i < STAR_COUNT * 0.3; i++) {
-      const col = midColors[Math.floor(Math.random() * midColors.length)];
-      stars.push({ x: Math.random() * w, y: Math.random() * h * 4, r: Math.random() * 1.2 + 0.4, speed: Math.random() * 0.05 + 0.02, col, alpha: Math.random() * 0.6 + 0.3, twinkleSpeed: Math.random() * 0.015 + 0.004, twinklePhase: Math.random() * 6.28 });
-    }
-    for (let i = 0; i < STAR_COUNT * 0.1; i++) {
-      const col = nearColors[Math.floor(Math.random() * nearColors.length)];
-      stars.push({ x: Math.random() * w, y: Math.random() * h * 4, r: Math.random() * 1.8 + 0.8, speed: Math.random() * 0.1 + 0.04, col, alpha: Math.random() * 0.7 + 0.3, twinkleSpeed: Math.random() * 0.02 + 0.005, twinklePhase: Math.random() * 6.28 });
-    }
+    const addGroup = (count, palette, rMin, rMax, sMin, sMax, aMin, aMax) => {
+      for (let i = 0; i < count; i++) {
+        const col = palette[Math.floor(Math.random() * palette.length)];
+        const r = rMin + Math.random() * (rMax - rMin);
+        stars.push({
+          x: Math.random() * w,
+          y: Math.random() * h * 4,
+          r,
+          speed: sMin + Math.random() * (sMax - sMin),
+          solidColor: `rgb(${col[0]},${col[1]},${col[2]})`,
+          alpha: aMin + Math.random() * (aMax - aMin),
+          twinkleSpeed: 0.002 + Math.random() * 0.01,
+          twinklePhase: Math.random() * 6.28,
+          hasGlow: r > 1.5
+        });
+      }
+    };
+
+    addGroup(Math.floor(STAR_COUNT * 0.6), farColors,  0.15, 0.85, 0.005, 0.025, 0.2, 0.7);
+    addGroup(Math.floor(STAR_COUNT * 0.3), midColors,  0.4,  1.6,  0.02,  0.07,  0.3, 0.9);
+    addGroup(Math.floor(STAR_COUNT * 0.1), nearColors, 0.8,  2.6,  0.04,  0.14,  0.3, 1.0);
   }
 
   let frame = 0;
-  function draw() {
+  const FRAME_INTERVAL = 1000 / 45;
+  let lastDrawTime = 0;
+
+  function draw(now) {
+    requestAnimationFrame(draw);
+    if (now - lastDrawTime < FRAME_INTERVAL) return;
+    lastDrawTime = now;
+
     ctx.clearRect(0, 0, w, h);
     frame++;
 
@@ -129,29 +182,26 @@ gsap.registerPlugin(ScrollTrigger);
 
       const tw = Math.sin(frame * s.twinkleSpeed + s.twinklePhase) * 0.3 + 0.7;
       const a = s.alpha * tw;
-      const [r, g, b] = s.col;
 
+      ctx.globalAlpha = a;
+      ctx.fillStyle = s.solidColor;
       ctx.beginPath();
       ctx.arc(s.x, drawY, s.r, 0, 6.28);
-      ctx.fillStyle = `rgba(${r},${g},${b},${a.toFixed(2)})`;
       ctx.fill();
 
-      if (s.r > 1.5) {
-        const glow = ctx.createRadialGradient(s.x, drawY, 0, s.x, drawY, s.r * 4);
-        glow.addColorStop(0, `rgba(${r},${g},${b},${(a * 0.12).toFixed(3)})`);
-        glow.addColorStop(1, 'transparent');
+      if (s.hasGlow) {
+        ctx.globalAlpha = a * 0.12;
         ctx.beginPath();
         ctx.arc(s.x, drawY, s.r * 4, 0, 6.28);
-        ctx.fillStyle = glow;
         ctx.fill();
       }
     }
 
-    requestAnimationFrame(draw);
+    ctx.globalAlpha = 1;
   }
 
-  resize(); createStars(); draw();
-  window.addEventListener('resize', () => { resize(); createStars(); });
+  resize(); createStars(); requestAnimationFrame(draw);
+  window.addEventListener('resize', () => { resize(); createStars(); }, { passive: true });
 })();
 
 /* ============================================
@@ -190,24 +240,38 @@ document.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', 
 
 const sectionEls = document.querySelectorAll('section[id]');
 const navLinks = document.querySelectorAll('.nav-link');
-sectionEls.forEach(sec => {
-  ScrollTrigger.create({
-    trigger: sec, start: 'top center', end: 'bottom center',
-    onEnter: () => setActiveNav(sec.id),
-    onEnterBack: () => setActiveNav(sec.id)
-  });
-});
 function setActiveNav(id) {
   navLinks.forEach(l => l.classList.remove('active'));
   const a = document.querySelector(`.nav-link[data-section="${id}"]`);
   if (a) a.classList.add('active');
 }
+function updateActiveNav() {
+  const refLine = window.innerHeight * 0.35;
+  let bestId = '';
+  sectionEls.forEach(sec => {
+    const r = sec.getBoundingClientRect();
+    if (r.top <= refLine && r.bottom > refLine) bestId = sec.id;
+  });
+  if (!bestId) {
+    let minDist = Infinity;
+    sectionEls.forEach(sec => {
+      const d = Math.abs(sec.getBoundingClientRect().top - refLine);
+      if (d < minDist) { minDist = d; bestId = sec.id; }
+    });
+  }
+  if (bestId) setActiveNav(bestId);
+}
+window.addEventListener('scroll', updateActiveNav, { passive: true });
 
+/* Nav scroll: detect section padding so label appears just below the header */
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {
     e.preventDefault();
     const target = document.querySelector(a.getAttribute('href'));
-    if (target) lenis.scrollTo(target, { offset: -70 });
+    if (target) {
+      const pt = parseInt(window.getComputedStyle(target).paddingTop) || 0;
+      lenis.scrollTo(target, { offset: pt - 90 });
+    }
   });
 });
 
@@ -248,14 +312,21 @@ document.querySelectorAll('[data-split-text]').forEach(el => {
 
 const contactH = document.querySelector('[data-split-contact]');
 if (contactH) {
-  const text = contactH.textContent;
+  const text = contactH.textContent.trim();
+  const words = text.split(/\s+/);
   contactH.innerHTML = '';
-  for (let i = 0; i < text.length; i++) {
-    const span = document.createElement('span');
-    span.className = 'char';
-    span.textContent = text[i] === ' ' ? '\u00A0' : text[i];
-    contactH.appendChild(span);
-  }
+  words.forEach((word, wi) => {
+    const wordSpan = document.createElement('span');
+    wordSpan.className = 'contact-word';
+    for (let i = 0; i < word.length; i++) {
+      const span = document.createElement('span');
+      span.className = 'char';
+      span.textContent = word[i] === ' ' ? '\u00A0' : word[i];
+      wordSpan.appendChild(span);
+    }
+    contactH.appendChild(wordSpan);
+    if (wi < words.length - 1) contactH.appendChild(document.createTextNode('\u00A0'));
+  });
 }
 
 /* ============================================
@@ -265,7 +336,7 @@ const heroTl = gsap.timeline({ delay: 0.3 });
 heroTl.to('.hero-badge', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 0.2);
 heroTl.to('.hero-name .char', { opacity: 1, y: 0, rotateX: 0, stagger: 0.03, duration: 0.9, ease: 'power3.out' }, 0.5);
 heroTl.to('.hero-title-wrapper', { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, 1.1);
-heroTl.from('.hero-btn', { opacity: 0, y: 25, stagger: 0.12, duration: 0.7, ease: 'power3.out' }, 1.3);
+heroTl.to('.hero-summary', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 1.3);
 heroTl.from('.scroll-cta', { opacity: 0, y: 15, duration: 0.6, ease: 'power3.out' }, 1.7);
 
 gsap.to('.hero-content', {
@@ -360,15 +431,16 @@ if (track) {
   const totalScroll = () => track.scrollWidth - window.innerWidth;
   const horizontalScroll = gsap.to(track, {
     x: () => -totalScroll(), ease: 'none',
-    scrollTrigger: { trigger: '#projects', start: 'top top', end: () => '+=' + totalScroll(), scrub: 1, pin: true, anticipatePin: 1, invalidateOnRefresh: true }
+    scrollTrigger: { trigger: '#projects', start: 'top top', end: () => '+=' + totalScroll(), scrub: 1.5, pin: true, anticipatePin: 1, invalidateOnRefresh: true }
   });
 
   track.querySelectorAll('.project-slide').forEach((slide, i) => {
-    gsap.from(slide, {
-      opacity: 0, scale: 0.92, duration: 0.8, ease: 'power3.out',
-      scrollTrigger: { trigger: slide, containerAnimation: horizontalScroll, start: 'left 85%', toggleActions: 'play none none reverse' }
-    });
-
+    gsap.fromTo(slide,
+      { opacity: 0, scale: 0.92 },
+      { opacity: 1, scale: 1, duration: 0.8, ease: 'power3.out', immediateRender: false,
+        scrollTrigger: { trigger: slide, containerAnimation: horizontalScroll, start: 'left 95%', toggleActions: 'play none none reverse' }
+      }
+    );
     slide.addEventListener('click', () => openProjectModal(i));
   });
 }
@@ -386,6 +458,8 @@ function openProjectModal(idx) {
   if (!p) return;
 
   modalImg.src = p.img;
+  modalImg.style.objectFit = p.imgFit || 'cover';
+  modalImg.style.objectPosition = p.imgFit === 'contain' ? 'center top' : 'center';
   modalTitle.textContent = p.title;
 
   let descHTML = '';
@@ -395,7 +469,10 @@ function openProjectModal(idx) {
   }
   modalDesc.innerHTML = descHTML;
 
-  modalLinks.innerHTML = '';
+  const links = [];
+  if (p.website) links.push(`<a href="${p.website}" target="_blank" rel="noopener noreferrer">Visit Website</a>`);
+  if (p.github) links.push(`<a href="${p.github}" target="_blank" rel="noopener noreferrer">View on GitHub</a>`);
+  modalLinks.innerHTML = links.join('');
   modalTags.innerHTML = p.tags.map(t => `<span>${t}</span>`).join('');
   projectModal.classList.add('open');
 }
@@ -478,7 +555,6 @@ function closeImacOverlay() { imacOverlay.classList.remove('open'); }
 imacOverlay.querySelector('.imac-overlay-backdrop').addEventListener('click', closeImacOverlay);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && imacOverlay.classList.contains('open')) closeImacOverlay(); });
 
-/* Close on red dot click */
 imacOverlay.addEventListener('click', e => {
   const dot = e.target.closest('.term-dots span:first-child');
   if (dot) closeImacOverlay();
@@ -487,20 +563,33 @@ imacOverlay.addEventListener('click', e => {
 /* ============================================
    CONTACT ANIMATIONS
    ============================================ */
-gsap.from('.contact-sub', {
-  opacity: 0, y: 25, duration: 0.8, ease: 'power3.out',
-  scrollTrigger: { trigger: '.contact-sub', start: 'top 90%' }
-});
-gsap.from('.contact-card', {
-  opacity: 0, y: 30, stagger: 0.12, duration: 0.7, ease: 'power3.out',
-  scrollTrigger: { trigger: '.contact-links', start: 'top 90%' }
-});
+gsap.fromTo('.contact-sub',
+  { opacity: 0, y: 25 },
+  { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', immediateRender: false,
+    scrollTrigger: { trigger: '#contact', start: 'top 80%', once: true } }
+);
+gsap.fromTo(['.contact-top-actions .contact-card', '.contact-links .contact-card'],
+  { opacity: 0, y: 30 },
+  { opacity: 1, y: 0, stagger: 0.1, duration: 0.7, ease: 'power3.out', immediateRender: false,
+    scrollTrigger: { trigger: '#contact', start: 'top 75%', once: true } }
+);
 
 /* ============================================
    COURSEWORK TOGGLE
    ============================================ */
 document.querySelectorAll('.coursework-toggle').forEach(btn => {
   btn.addEventListener('click', e => { e.stopPropagation(); btn.classList.toggle('open'); btn.nextElementSibling.classList.toggle('open'); });
+});
+
+/* Make entire education cards toggle coursework */
+document.querySelectorAll('.edu-card').forEach(card => {
+  card.addEventListener('click', () => {
+    const btn = card.querySelector('.coursework-toggle');
+    const list = card.querySelector('.coursework-list');
+    if (!btn || !list) return;
+    btn.classList.toggle('open');
+    list.classList.toggle('open');
+  });
 });
 
 /* ============================================
@@ -518,6 +607,6 @@ if (planet) {
   window.addEventListener('mousemove', e => {
     const x = (e.clientX / window.innerWidth - 0.5) * 15;
     const y = (e.clientY / window.innerHeight - 0.5) * 15;
-    planet.style.transform = `translate(${x}px, ${y}px)`;
+    gsap.to(planet, { x, y, duration: 0.8, ease: 'power2.out', overwrite: 'auto' });
   }, { passive: true });
 }
