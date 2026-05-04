@@ -1,12 +1,10 @@
 /* ============================================
    3D CHARACTER — real human GLTF model
    Inspired by github.com/akashrmalhotra/3d-portfolio
-   - Loads HoodieGuy.glb (Quaternius "Hoodie Character", CC0)
-   - Idle animation from the GLB (no manual bone edits — those broke skinning)
-   - Desk.glb, OfficeChair.glb, Laptop.glb props, staged for “at the desk”
-   - Headphones.glb (Nick Slough) parented to head
-   - Head bone tracks the mouse (applied after mixer each frame)
-   - Scroll-driven motion
+   - Loads ManLongSleeves.glb (Quaternius, CC0) — has Man_Sitting animation
+   - Desk / chair / laptop props
+   - Headphones (Nick Slough) parented to head
+   - Mouse look: quaternion offset on head bone after mixer (skin follows bone, not child pivots)
    ============================================ */
 import * as THREE from 'three';
 import { GLTFLoader } from 'https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
@@ -29,9 +27,9 @@ if (container && window.WebGLRenderingContext) {
   // The CSS opacity transition still gives a smooth 1.2s fade-in.
   container.classList.add('character-loaded');
 
-  const camera = new THREE.PerspectiveCamera(28, container.clientWidth / container.clientHeight, 0.1, 100);
-  camera.position.set(0, 1.0, 6.5);
-  camera.lookAt(0, 0.55, 0);
+  const camera = new THREE.PerspectiveCamera(24, container.clientWidth / container.clientHeight, 0.1, 100);
+  camera.position.set(0, 0.72, 7.35);
+  camera.lookAt(0, 0.14, 0);
 
   /* ---------- LIGHTING (always-on, evenly lit) ---------- */
   // Strong ambient so the character is fully visible everywhere
@@ -78,7 +76,14 @@ if (container && window.WebGLRenderingContext) {
   let headBone = null;
   let mixer = null;
 
-  /* ---------- Load HoodieGuy + desk scene ---------- */
+  /** Reused temp objects for head look (avoid GC each frame) */
+  const headAnimQuat = new THREE.Quaternion();
+  const headLookQuat = new THREE.Quaternion();
+  const headLookEuler = new THREE.Euler(0, 0, 0, 'YXZ');
+  let headLookYaw = 0;
+  let headLookPitch = 0;
+
+  /* ---------- Load seated character (author animation — no manual bones) ---------- */
   const loader = new GLTFLoader();
 
   // Helper: tweak any material to read well under our bright stage lighting
@@ -103,33 +108,50 @@ if (container && window.WebGLRenderingContext) {
   };
 
   loader.load(
-    'models/HoodieGuy.glb',
+    'models/ManLongSleeves.glb',
     (gltf) => {
       character = gltf.scene;
       character.traverse(tuneMaterial);
 
-      // Find head bone for mouse-tracking + headphones attachment
       character.traverse((obj) => {
-        if (!headBone) {
-          const n = (obj.name || '').toLowerCase().replace(/[^a-z]/g, '');
-          if (n === 'head') headBone = obj;
+        if (headBone) return;
+        const isBone = obj.isBone === true || obj.type === 'Bone';
+        if (!isBone) return;
+        const n = (obj.name || '').toLowerCase().replace(/[^a-z]/g, '');
+        if (n === 'head' || (n.endsWith('head') && !n.includes('fore'))) {
+          headBone = obj;
         }
       });
-      // Idle clip drives the skinned mesh correctly; manual leg poses stretched verts.
-      if (gltf.animations && gltf.animations.length) {
-        mixer = new THREE.AnimationMixer(character);
-        const clip =
-          gltf.animations.find(c => /idle_neutral/i.test(c.name)) ||
-          gltf.animations.find(c => /\|idle$/i.test(c.name)) ||
-          gltf.animations.find(c => /idle/i.test(c.name)) ||
-          gltf.animations[0];
-        const action = mixer.clipAction(clip);
-        action.timeScale = 0.75;
-        action.play();
+
+      if (!headBone) {
+        console.warn('[character] No head bone found; mouse look disabled');
       }
 
-      character.scale.setScalar(0.78);
-      character.position.set(0, -0.4, -0.06);
+      const SIT_CLIP = 'HumanArmature|Man_Sitting';
+      if (gltf.animations && gltf.animations.length) {
+        const clip =
+          gltf.animations.find(c => c.name === SIT_CLIP) ||
+          gltf.animations.find(c => /sitting/i.test(c.name));
+        if (clip) {
+          mixer = new THREE.AnimationMixer(character);
+          const action = mixer.clipAction(clip);
+          action.reset();
+          action.setLoop(THREE.LoopRepeat, 9999);
+          action.clampWhenFinished = false;
+          action.enabled = true;
+          action.weight = 1;
+          action.timeScale = 0.78;
+          action.play();
+          mixer.update(0.05);
+        } else {
+          console.warn('[character] No sitting clip on model');
+        }
+      }
+
+      // Sit pose vs separate props: scale down + lower Y until seat meets chair (rig root ≠ butt height).
+      const charScale = 0.28;
+      character.scale.setScalar(charScale);
+      character.position.set(0, -0.63, -0.04);
       character.rotation.y = 0;
 
       characterGroup.add(character);
@@ -139,7 +161,7 @@ if (container && window.WebGLRenderingContext) {
         loader.load('models/Headphones.glb', (hp) => {
           const headphones = hp.scene;
           headphones.traverse(tuneMaterial);
-          headphones.scale.setScalar(0.0085);
+          headphones.scale.setScalar(0.0085 * (charScale / 0.42));
           headphones.position.set(0, 0.08, 0.0);
           headphones.rotation.set(-0.05, 0, 0);
           headBone.add(headphones);
@@ -147,15 +169,15 @@ if (container && window.WebGLRenderingContext) {
       }
     },
     undefined,
-    (err) => { console.error('Hoodie load error', err); }
+    (err) => { console.error('Character GLB load error', err); }
   );
 
   /* ---- Office chair, behind the character ---- */
   loader.load('models/OfficeChair.glb', (gltf) => {
     const chair = gltf.scene;
     chair.traverse(tuneMaterial);
-    chair.scale.setScalar(0.68);
-    chair.position.set(0, -0.68, -0.38);
+    chair.scale.setScalar(0.5);
+    chair.position.set(0, -0.5, -0.42);
     chair.rotation.y = 0;
     characterGroup.add(chair);
   }, undefined, (err) => console.error('Chair load error', err));
@@ -164,8 +186,8 @@ if (container && window.WebGLRenderingContext) {
   loader.load('models/Desk.glb', (gltf) => {
     const desk = gltf.scene;
     desk.traverse(tuneMaterial);
-    desk.scale.setScalar(0.72);
-    desk.position.set(0, -0.68, 0.48);
+    desk.scale.setScalar(0.52);
+    desk.position.set(0, -0.5, 0.34);
     desk.rotation.y = 0;
     characterGroup.add(desk);
   }, undefined, (err) => console.error('Desk load error', err));
@@ -174,8 +196,8 @@ if (container && window.WebGLRenderingContext) {
   loader.load('models/Laptop.glb', (gltf) => {
     const laptop = gltf.scene;
     laptop.traverse(tuneMaterial);
-    laptop.scale.setScalar(0.15);
-    laptop.position.set(0, 0.02, 0.62);
+    laptop.scale.setScalar(0.1);
+    laptop.position.set(0, -0.02, 0.48);
     laptop.rotation.y = Math.PI;
     characterGroup.add(laptop);
   }, undefined, (err) => console.error('Laptop load error', err));
@@ -205,15 +227,28 @@ if (container && window.WebGLRenderingContext) {
   /* ---------- Mouse tracking ---------- */
   let mouseX = 0, mouseY = 0;
   let cursorX = 0, cursorY = 0;
+  function setPointerFromClient(clientX, clientY) {
+    mouseX = (clientX / window.innerWidth) * 2 - 1;
+    mouseY = -(clientY / window.innerHeight) * 2 + 1;
+  }
+
   document.addEventListener('mousemove', (e) => {
-    mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-    mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+    setPointerFromClient(e.clientX, e.clientY);
+  }, { passive: true });
+
+  window.addEventListener('pointermove', (e) => {
+    if (e.pointerType === 'mouse') return;
+    setPointerFromClient(e.clientX, e.clientY);
+  }, { passive: true });
+
+  document.addEventListener('touchstart', (e) => {
+    if (!e.touches[0]) return;
+    setPointerFromClient(e.touches[0].clientX, e.touches[0].clientY);
   }, { passive: true });
 
   document.addEventListener('touchmove', (e) => {
     if (!e.touches[0]) return;
-    mouseX = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
-    mouseY = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
+    setPointerFromClient(e.touches[0].clientX, e.touches[0].clientY);
   }, { passive: true });
 
   /* ---------- Resize ---------- */
@@ -244,34 +279,38 @@ if (container && window.WebGLRenderingContext) {
   function lerp(a, b, t) { return a + (b - a) * t; }
 
   function animate() {
-    const t = clock.getElapsedTime();
+    /* Clock.getElapsedTime() internally calls getDelta() — never call getDelta()
+       again in the same frame or the mixer's delta is ~0 and animations freeze. */
     const delta = clock.getDelta();
+    const t = clock.elapsedTime;
 
-    // Animation mixer (idle clip)
     if (mixer) mixer.update(delta);
 
-    cursorX = lerp(cursorX, mouseX, 0.07);
-    cursorY = lerp(cursorY, mouseY, 0.07);
+    cursorX = lerp(cursorX, mouseX, 0.12);
+    cursorY = lerp(cursorY, mouseY, 0.12);
 
-    // Head bone rotation tracking the mouse (mirrors reference handleHeadRotation)
+    /* Skinned head/eyes use the bone matrix — look is a local quat after the sitting clip. */
     if (headBone) {
-      if (window.scrollY < window.innerHeight * 0.7) {
-        const maxYaw = Math.PI / 6;
-        const maxPitch = Math.PI / 9;
-        headBone.rotation.y = lerp(headBone.rotation.y, cursorX * maxYaw, 0.1);
-        headBone.rotation.x = lerp(headBone.rotation.x, -cursorY * maxPitch, 0.1);
-      } else {
-        headBone.rotation.y = lerp(headBone.rotation.y, 0, 0.04);
-        headBone.rotation.x = lerp(headBone.rotation.x, 0, 0.04);
-      }
+      const activeLook = window.scrollY < window.innerHeight * 0.7;
+      const maxYaw = 0.48;
+      const maxPitch = 0.36;
+      const tgtYaw = activeLook ? cursorX * maxYaw : 0;
+      const tgtPitch = activeLook ? -cursorY * maxPitch : 0;
+      headLookYaw = lerp(headLookYaw, tgtYaw, 0.16);
+      headLookPitch = lerp(headLookPitch, tgtPitch, 0.16);
+
+      headAnimQuat.copy(headBone.quaternion);
+      headLookEuler.set(headLookPitch, headLookYaw, 0, 'YXZ');
+      headLookQuat.setFromEuler(headLookEuler);
+      headBone.quaternion.multiplyQuaternions(headAnimQuat, headLookQuat);
     }
 
     // Whole-body subtle parallax + scroll drift (apply to wrapper so model keeps its 180° face-forward rotation)
     if (character) {
-      characterGroup.rotation.y = lerp(characterGroup.rotation.y, cursorX * 0.18 + scrollOffset * 0.5, 0.04);
-      characterGroup.position.x = lerp(characterGroup.position.x, cursorX * 0.08 - scrollOffset * 0.3, 0.04);
-      // Floating bob (very subtle)
-      characterGroup.position.y = Math.sin(t * 1.0) * 0.05 + scrollOffset * -0.4;
+      characterGroup.rotation.y = lerp(characterGroup.rotation.y, cursorX * 0.06 + scrollOffset * 0.5, 0.04);
+      characterGroup.position.x = lerp(characterGroup.position.x, cursorX * 0.05 - scrollOffset * 0.3, 0.04);
+      // Tiny Y bob only so seated pose still reads grounded (large bob felt like levitation).
+      characterGroup.position.y = Math.sin(t * 0.9) * 0.012 + scrollOffset * -0.4;
     }
 
     // Orbit particles
@@ -282,7 +321,7 @@ if (container && window.WebGLRenderingContext) {
     });
 
     // Camera scroll zoom
-    camera.position.z = lerp(camera.position.z, 6.5 + scrollOffset * 1.6, 0.05);
+    camera.position.z = lerp(camera.position.z, 7.35 + scrollOffset * 1.6, 0.05);
 
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
