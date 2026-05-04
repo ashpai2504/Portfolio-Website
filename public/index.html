@@ -10,9 +10,37 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <!-- file:// breaks ES modules + GLB fetch; banner explains how to run locally -->
+  <div id="local-dev-banner" class="local-dev-banner" hidden role="alert">
+    <div class="local-dev-banner-inner">
+      <strong class="local-dev-banner-title">Run this site with a local server (required for the 3D character)</strong>
+      <p class="local-dev-banner-text">Opening <code>index.html</code> directly uses <code>file://</code>. Browsers block that for <code>import</code> scripts and for loading <code>.glb</code> models, so the hero stays empty.</p>
+      <ol class="local-dev-steps">
+        <li>Open Terminal in the project folder: <span class="local-dev-mono">Portfolio Website</span> (parent of <code>public/</code>).</li>
+        <li>Install once: <code class="local-dev-mono">npm install</code></li>
+        <li>Start the app: <code class="local-dev-mono">npm start</code></li>
+        <li>Open the URL printed in Terminal (usually <a class="local-dev-link" href="http://localhost:3000" target="_blank" rel="noopener noreferrer">http://localhost:3000</a> — if that port is busy, the server picks the next free port). Or run <code class="local-dev-mono">npm run open</code> on macOS right after starting (opens 3000).</li>
+      </ol>
+      <button type="button" class="local-dev-dismiss" id="local-dev-dismiss">Dismiss</button>
+    </div>
+  </div>
+  <script>
+    (function () {
+      if (location.protocol !== 'file:') return;
+      var b = document.getElementById('local-dev-banner');
+      var btn = document.getElementById('local-dev-dismiss');
+      if (!b || !btn) return;
+      b.removeAttribute('hidden');
+      btn.addEventListener('click', function () { b.setAttribute('hidden', ''); });
+    })();
+  </script>
+
   <div id="space-bg"></div>
   <canvas id="starfield"></canvas>
   <div id="nebula-layer"></div>
+
+  <!-- Custom mouse cursor (3D-portfolio inspired) -->
+  <div class="cursor-main" id="cursor-main"></div>
 
   <div class="shooting-stars">
     <div class="shooting-star"></div>
@@ -32,6 +60,7 @@
       </div>
       <nav id="nav">
         <a href="#hero" class="nav-link active" data-section="hero"><span data-text="Home">Home</span></a>
+        <a href="#about" class="nav-link" data-section="about"><span data-text="About">About</span></a>
         <a href="#education" class="nav-link" data-section="education"><span data-text="Education">Education</span></a>
         <a href="#experience" class="nav-link" data-section="experience"><span data-text="Experience">Experience</span></a>
         <a href="#projects" class="nav-link" data-section="projects"><span data-text="Projects">Projects</span></a>
@@ -42,22 +71,59 @@
     </div>
   </header>
 
-  <!-- HERO -->
-  <section id="hero">
+  <!-- HERO (3D-portfolio inspired landing) -->
+  <section id="hero" class="landing-section">
     <div class="hero-depth-layer depth-1"></div>
     <div class="hero-depth-layer depth-2"></div>
-    <div class="hero-content">
-      <div class="hero-badge"><span class="code-tag">&lt;</span>developer<span class="code-tag">/&gt;</span></div>
-      <h1 class="hero-name" data-split-text>Ashmit Pai</h1>
-      <div class="hero-title-wrapper">
-        <span class="hero-title" id="typed-text"></span><span class="cursor-blink">|</span>
+
+    <!-- 3D Character (Three.js) -->
+    <div class="character-model" id="character-model">
+      <div class="character-rim"></div>
+      <div class="character-hover"></div>
+    </div>
+
+    <div class="landing-container">
+      <!-- Left: name intro -->
+      <div class="landing-intro">
+        <h2>Hello! I'm</h2>
+        <h1>ASHMIT<br/><span>PAI</span></h1>
       </div>
-      <div class="hero-summary">
-        <p>I'm a CS grad student at ASU who genuinely loves building new products. Not just writing code, but creating things that actually work, scale, and make an impact. I've shipped full-stack applications, built AI-powered systems, designed data pipelines that run at scale, and done real geospatial research working with spatial data and maps. I pick up new technologies fast and care deeply about the quality of what I put out.</p>
-        <p>I'm drawn to hard problems, where deep technical thinking meets creativity to build something that did not exist before. I do not just integrate intelligence into systems, I think about why it should be there and what problem it solves for the person on the other end. What really drives me is creating real business value and building products people actually need</p>
+
+      <!-- Right: role labels (toggle animation) -->
+      <div class="landing-info">
+        <h3>Computer Science &amp;</h3>
+        <h2 class="landing-info-h2">
+          <div class="landing-h2-1">AI</div>
+          <div class="landing-h2-2">Full-Stack</div>
+        </h2>
+        <h2 class="landing-info-h2-row">
+          <div class="landing-h2-info">Engineer</div>
+          <div class="landing-h2-info-1">Developer</div>
+        </h2>
       </div>
     </div>
+
     <div class="scroll-cta"><span>Scroll to explore</span><div class="scroll-line"></div></div>
+  </section>
+
+  <!-- ABOUT (summary moved out of hero) -->
+  <section id="about" class="section-reveal about-section">
+    <div class="section-container">
+      <div class="section-label"><span class="section-idx">00</span><span class="section-line"></span><span class="section-tag">about</span></div>
+      <h2 class="section-title" data-split-text>About Me</h2>
+      <div class="about-grid">
+        <div class="about-text">
+          <p>I'm a CS grad student at ASU who genuinely loves building new products. Not just writing code, but creating things that actually work, scale, and make an impact. I've shipped full-stack applications, built AI-powered systems, designed data pipelines that run at scale, and done real geospatial research working with spatial data and maps. I pick up new technologies fast and care deeply about the quality of what I put out.</p>
+          <p>I'm drawn to hard problems, where deep technical thinking meets creativity to build something that did not exist before. I do not just integrate intelligence into systems, I think about why it should be there and what problem it solves for the person on the other end. What really drives me is creating real business value and building products people actually need.</p>
+        </div>
+        <div class="about-tag-row">
+          <span class="about-tag">Full-Stack</span>
+          <span class="about-tag">AI / ML</span>
+          <span class="about-tag">Data @ Scale</span>
+          <span class="about-tag">Geospatial</span>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- EDUCATION -->
@@ -235,6 +301,14 @@
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+    }
+  }
+  </script>
+  <script type="module" src="character.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

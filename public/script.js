@@ -330,17 +330,12 @@ if (contactH) {
 }
 
 /* ============================================
-   HERO ANIMATIONS
+   HERO ANIMATIONS (landing intro fade + scroll-out)
    ============================================ */
-const heroTl = gsap.timeline({ delay: 0.3 });
-heroTl.to('.hero-badge', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 0.2);
-heroTl.to('.hero-name .char', { opacity: 1, y: 0, rotateX: 0, stagger: 0.03, duration: 0.9, ease: 'power3.out' }, 0.5);
-heroTl.to('.hero-title-wrapper', { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, 1.1);
-heroTl.to('.hero-summary', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 1.3);
-heroTl.from('.scroll-cta', { opacity: 0, y: 15, duration: 0.6, ease: 'power3.out' }, 1.7);
+gsap.from('.scroll-cta', { opacity: 0, y: 15, duration: 0.6, ease: 'power3.out', delay: 1.4 });
 
-gsap.to('.hero-content', {
-  yPercent: 40, opacity: 0,
+gsap.to('.landing-container', {
+  yPercent: 30, opacity: 0,
   scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 0.5 }
 });
 
@@ -349,26 +344,23 @@ gsap.to('.planet', {
   scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1 }
 });
 
-/* ============================================
-   TYPING EFFECT
-   ============================================ */
-(function initTyping() {
-  const el = document.getElementById('typed-text');
-  let si = 0, ci = 0, del = false;
-  function tick() {
-    const s = TYPING_STRINGS[si];
-    if (del) {
-      el.textContent = s.substring(0, ci--);
-      if (ci < 0) { del = false; si = (si + 1) % TYPING_STRINGS.length; setTimeout(tick, 400); return; }
-      setTimeout(tick, 25);
-    } else {
-      el.textContent = s.substring(0, ci++);
-      if (ci > s.length) { del = true; setTimeout(tick, 2200); return; }
-      setTimeout(tick, 55);
-    }
-  }
-  setTimeout(tick, 1800);
+/* Role label toggle (mirrors reference Tech / Business swap) */
+(function initRoleToggle() {
+  const info = document.querySelector('.landing-info');
+  if (!info) return;
+  setInterval(() => info.classList.toggle('toggle'), 2400);
 })();
+
+/* About section reveal */
+gsap.from('.about-text p', {
+  opacity: 0, y: 20, stagger: 0.15, duration: 0.8, ease: 'power3.out',
+  scrollTrigger: { trigger: '#about', start: 'top 80%' }
+});
+gsap.from('.about-tag', {
+  opacity: 0, y: 12, stagger: 0.08, duration: 0.5, ease: 'power3.out',
+  scrollTrigger: { trigger: '.about-tag-row', start: 'top 90%' }
+});
+
 
 /* ============================================
    SECTION ANIMATIONS
@@ -598,6 +590,90 @@ document.querySelectorAll('.edu-card').forEach(card => {
 document.querySelectorAll('.timeline-card').forEach(card => {
   card.addEventListener('click', () => card.classList.toggle('expanded'));
 });
+
+/* ============================================
+   CHARACTER SCROLL-DRIVEN MOTION
+   GSAP timeline that pushes the 3D character canvas
+   off to the side as we scroll past hero
+   (mirrors GsapScroll.ts in reference repo)
+   ============================================ */
+(function initCharacterScroll() {
+  const charEl = document.getElementById('character-model');
+  if (!charEl) return;
+  const isWide = () => window.innerWidth > 1099;
+
+  if (isWide()) {
+    gsap.to(charEl, {
+      x: '-8%',
+      scale: 0.92,
+      /* Do not dim with CSS filter — it makes the WebGL canvas read as a
+         black silhouette. Lighting is handled in character.js. */
+      scrollTrigger: {
+        trigger: '#hero',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 1,
+      }
+    });
+    gsap.to('.character-rim', {
+      opacity: 0,
+      scale: 0.4,
+      scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom 40%', scrub: 1 }
+    });
+  } else {
+    gsap.to(charEl, {
+      opacity: 0.0,
+      y: '-15%',
+      scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1 }
+    });
+  }
+})();
+
+/* ============================================
+   CUSTOM CURSOR (3D-portfolio inspired)
+   ============================================ */
+(function initCursor() {
+  const cursor = document.getElementById('cursor-main');
+  if (!cursor) return;
+  // Skip on touch-primary devices
+  if (window.matchMedia('(hover: none)').matches) { cursor.style.display = 'none'; return; }
+
+  let mx = 0, my = 0, cx = 0, cy = 0;
+  const onMove = (e) => {
+    mx = e.clientX; my = e.clientY;
+    cursor.classList.add('visible');
+  };
+  document.addEventListener('mousemove', onMove, { passive: true });
+  document.addEventListener('mouseleave', () => cursor.classList.remove('visible'));
+
+  function loop() {
+    cx += (mx - cx) * 0.18;
+    cy += (my - cy) * 0.18;
+    cursor.style.transform = `translate(${cx}px, ${cy}px)`;
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  // Hover targets — anything clickable / interactive becomes a hover state
+  const hoverSel = 'a, button, .nav-link, .imac-monitor, .project-slide, .timeline-card, .edu-card, .magnetic, .header-profile, .coursework-toggle';
+  document.querySelectorAll(hoverSel).forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('cursor-hover'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hover'));
+  });
+})();
+
+/* ============================================
+   HOVER-LINKS (slide-up reveal on contact + hero-btns)
+   ============================================ */
+(function initHoverLinks() {
+  // Wrap text inside contact-card spans so the slide-up effect can run
+  document.querySelectorAll('.contact-card span').forEach(span => {
+    if (span.querySelector('.hover-link')) return;
+    const text = span.textContent.trim();
+    if (!text) return;
+    span.innerHTML = `<span class="hover-link"><span class="hover-in">${text}<div>${text}</div></span></span>`;
+  });
+})();
 
 /* ============================================
    PLANET MOUSE PARALLAX

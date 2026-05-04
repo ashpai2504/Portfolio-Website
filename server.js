@@ -1,11 +1,13 @@
 /**
  * Portfolio — Express serves the frontend (public/) and exposes a small API.
  */
+const http = require('http');
 const express = require('express');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const preferredPort = parseInt(process.env.PORT, 10) || 3000;
+const maxPortTry = preferredPort + 25;
 
 app.use(express.json());
 
@@ -30,6 +32,21 @@ app.get('*', (req, res, next) => {
   res.sendFile(path.join(publicDir, 'index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`\n  Portfolio running at http://localhost:${PORT}\n  API health: http://localhost:${PORT}/api/health\n`);
-});
+function listen(port) {
+  const server = http.createServer(app);
+  server.listen(port, () => {
+    const url = `http://localhost:${port}`;
+    console.log(`\n  Portfolio running at ${url}\n  API health: ${url}/api/health\n`);
+  });
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE' && port < maxPortTry) {
+      console.warn(`  Port ${port} is already in use, trying ${port + 1}…`);
+      listen(port + 1);
+    } else {
+      console.error(err);
+      process.exit(1);
+    }
+  });
+}
+
+listen(preferredPort);
