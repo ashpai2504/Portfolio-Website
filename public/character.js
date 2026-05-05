@@ -1,10 +1,11 @@
 /* ============================================
    3D CHARACTER — real human GLTF model
    Inspired by github.com/akashrmalhotra/3d-portfolio
-   - Loads ManLongSleeves.glb (Quaternius, CC0) — has Man_Sitting animation
+   - ManCasual base + Shirt mats tinted as a dark hoodie (Quaternius hoodies use CharacterArmature — no sit clip)
    - Desk / chair / laptop props
    - Headphones (Nick Slough) parented to head
-   - Mouse look: quaternion offset on head bone after mixer (skin follows bone, not child pivots)
+   - Mouse look: quaternion on head bone after mixer
+   - Skin / hair: light brown / black; hero scene scaled as one unit (desk/chair/laptop ratios fixed)
    ============================================ */
 import * as THREE from 'three';
 import { GLTFLoader } from 'https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
@@ -18,7 +19,7 @@ if (container && window.WebGLRenderingContext) {
   renderer.setSize(container.clientWidth, container.clientHeight);
   // Slightly less contrasty than ACES so low-poly PBR stays readable on dark bg
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.55;
+  renderer.toneMappingExposure = 1.38;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   container.appendChild(renderer.domElement);
 
@@ -27,16 +28,19 @@ if (container && window.WebGLRenderingContext) {
   // The CSS opacity transition still gives a smooth 1.2s fade-in.
   container.classList.add('character-loaded');
 
+  const HERO_SCENE_SCALE = 1.22;
+  const BASE_CAM_Z = 7.35 * HERO_SCENE_SCALE;
+
   const camera = new THREE.PerspectiveCamera(24, container.clientWidth / container.clientHeight, 0.1, 100);
-  camera.position.set(0, 0.72, 7.35);
+  camera.position.set(0, 0.72, BASE_CAM_Z);
   camera.lookAt(0, 0.14, 0);
 
   /* ---------- LIGHTING (always-on, evenly lit) ---------- */
   // Strong ambient so the character is fully visible everywhere
-  scene.add(new THREE.AmbientLight(0xffffff, 2.15));
+  scene.add(new THREE.AmbientLight(0xfff5f0, 1.48));
 
   // Hemisphere bounce light for natural skin
-  const hemi = new THREE.HemisphereLight(0xffffff, 0x444466, 1.0);
+  const hemi = new THREE.HemisphereLight(0xffffff, 0x444466, 0.88);
   hemi.position.set(0, 6, 0);
   scene.add(hemi);
 
@@ -49,7 +53,7 @@ if (container && window.WebGLRenderingContext) {
   const frontFill = new THREE.DirectionalLight(0xffffff, 1.35);
   frontFill.position.set(0, 2, 6);
   scene.add(frontFill);
-  const faceFill = new THREE.DirectionalLight(0xffeedd, 0.9);
+  const faceFill = new THREE.DirectionalLight(0xf5dcc8, 0.62);
   faceFill.position.set(0, 1.2, 8);
   scene.add(faceFill);
 
@@ -70,6 +74,7 @@ if (container && window.WebGLRenderingContext) {
 
   /* ---------- Group containers ---------- */
   const characterGroup = new THREE.Group();
+  characterGroup.scale.setScalar(HERO_SCENE_SCALE);
   scene.add(characterGroup);
 
   let character = null;
@@ -86,29 +91,69 @@ if (container && window.WebGLRenderingContext) {
   /* ---------- Load seated character (author animation — no manual bones) ---------- */
   const loader = new GLTFLoader();
 
+  /** Skin / hair / “hoodie”. Use sRGB colors — plain setRGB() defaults to linear and reads washed-out/pale. */
+  const applyCharacterAppearance = (mat) => {
+    if (!mat || !mat.name) return;
+    const matName = mat.name.trim();
+    if (matName === 'Skin') {
+      mat.map = null;
+      mat.roughnessMap = null;
+      mat.metalnessMap = null;
+      /* Light brown skin (sRGB) — a step lighter than before, still clearly brown */
+      mat.color.setHex(0x544334);
+    }
+    if (matName === 'Hair' || matName === 'Hair2') {
+      mat.color.setHex(0x0a0809);
+    }
+    if (matName === 'Shirt2') {
+      mat.color.setHex(0x2a2633);
+    }
+    if (matName === 'Shirt') {
+      mat.color.setHex(0x3d3550);
+    }
+  };
+
   // Helper: tweak any material to read well under our bright stage lighting
   const tuneMaterial = (node) => {
-    if (node.isMesh && node.material) {
-      node.material.envMapIntensity = 1.0;
+    if (!node.isMesh || !node.material) return;
+    const mats = Array.isArray(node.material) ? node.material : [node.material];
+    for (const mat of mats) {
+      if (!mat) continue;
+      applyCharacterAppearance(mat);
+      mat.envMapIntensity = 1.0;
       node.castShadow = false;
       node.receiveShadow = false;
-      if (node.material.metalness !== undefined) {
-        node.material.metalness = Math.min(node.material.metalness ?? 0, 0.2);
+      const n = mat.name || '';
+      if (n === 'Skin') {
+        mat.metalness = 0;
+        mat.roughness = 0.84;
+      } else {
+        if (mat.metalness !== undefined) {
+          mat.metalness = Math.min(mat.metalness ?? 0, 0.2);
+        }
+        if (mat.roughness !== undefined) {
+          mat.roughness = Math.max(mat.roughness ?? 0.6, 0.55);
+        }
       }
-      if (node.material.roughness !== undefined) {
-        node.material.roughness = Math.max(node.material.roughness ?? 0.6, 0.55);
+      // Fill: avoid cool fill on skin/hair (washes out brown tones)
+      if (mat.emissive && mat.emissiveIntensity !== undefined) {
+        if (n === 'Skin') {
+          mat.emissive.setHex(0x000000);
+          mat.emissiveIntensity = 0;
+        } else if (n === 'Hair' || n === 'Hair2' || n === 'Eyes') {
+          mat.emissive.setHex(0x000000);
+          mat.emissiveIntensity = 0;
+        } else {
+          mat.emissive.setHex(0x1a2230);
+          mat.emissiveIntensity = 0.06;
+        }
       }
-      // Tiny emissive fill on PBR mats only (avoid washing out albedo on low-poly)
-      if (node.material.emissive && node.material.emissiveIntensity !== undefined) {
-        node.material.emissive.setHex(0x1a2230);
-        node.material.emissiveIntensity = 0.06;
-      }
-      node.material.needsUpdate = true;
+      mat.needsUpdate = true;
     }
   };
 
   loader.load(
-    'models/ManLongSleeves.glb',
+    'models/ManCasual.glb',
     (gltf) => {
       character = gltf.scene;
       character.traverse(tuneMaterial);
@@ -161,8 +206,8 @@ if (container && window.WebGLRenderingContext) {
         loader.load('models/Headphones.glb', (hp) => {
           const headphones = hp.scene;
           headphones.traverse(tuneMaterial);
-          headphones.scale.setScalar(0.0085 * (charScale / 0.42));
-          headphones.position.set(0, 0.08, 0.0);
+          headphones.scale.setScalar(0.0108 * (charScale / 0.42));
+          headphones.position.set(0, 0.09, 0.02);
           headphones.rotation.set(-0.05, 0, 0);
           headBone.add(headphones);
         }, undefined, (err) => console.error('Headphones load error', err));
@@ -321,7 +366,7 @@ if (container && window.WebGLRenderingContext) {
     });
 
     // Camera scroll zoom
-    camera.position.z = lerp(camera.position.z, 7.35 + scrollOffset * 1.6, 0.05);
+    camera.position.z = lerp(camera.position.z, BASE_CAM_Z + scrollOffset * 1.6 * HERO_SCENE_SCALE, 0.05);
 
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
