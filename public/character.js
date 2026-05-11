@@ -99,8 +99,8 @@ if (container && window.WebGLRenderingContext) {
       mat.map = null;
       mat.roughnessMap = null;
       mat.metalnessMap = null;
-      /* Light brown skin (sRGB) — a step lighter than before, still clearly brown */
-      mat.color.setHex(0x544334);
+      /* Warm South Asian / Indian brown skin (sRGB) */
+      mat.color.setHex(0xA87050);
     }
     if (matName === 'Hair' || matName === 'Hair2') {
       mat.color.setHex(0x0a0809);
@@ -152,6 +152,46 @@ if (container && window.WebGLRenderingContext) {
     }
   };
 
+  /* ---- Sunglasses factory: wayfarer-style geometry parented to head bone ---- */
+  function createSunglasses() {
+    const g = new THREE.Group();
+    const lensMat = new THREE.MeshStandardMaterial({
+      color: 0x06060f,
+      metalness: 0.25,
+      roughness: 0.05,
+      transparent: true,
+      opacity: 0.92,
+    });
+    const frameMat = new THREE.MeshStandardMaterial({
+      color: 0x1a1a1c,
+      metalness: 0.85,
+      roughness: 0.18,
+    });
+    const rx = 1.05, ry = 0.72, lx = 1.3;
+    const lensGeo = new THREE.CylinderGeometry(1, 1, 0.14, 32);
+    [-1, 1].forEach(side => {
+      const lens = new THREE.Mesh(lensGeo, lensMat);
+      lens.rotation.x = Math.PI / 2;
+      lens.scale.set(rx, ry, 1);
+      lens.position.set(side * lx, 0, 0);
+      g.add(lens);
+      const frame = new THREE.Mesh(new THREE.TorusGeometry(1, 0.09, 8, 32), frameMat);
+      frame.scale.set(rx, ry, 1);
+      frame.position.set(side * lx, 0, 0.02);
+      g.add(frame);
+    });
+    const bridge = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, (lx - rx) * 2, 6), frameMat);
+    bridge.rotation.z = Math.PI / 2;
+    g.add(bridge);
+    [-1, 1].forEach(side => {
+      const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.04, 2.6, 6), frameMat);
+      arm.rotation.z = Math.PI / 2;
+      arm.position.set(side * (lx + rx + 2.6 / 2 + 0.05), 0, -0.08);
+      g.add(arm);
+    });
+    return g;
+  }
+
   loader.load(
     'models/ManCasual.glb',
     (gltf) => {
@@ -200,6 +240,14 @@ if (container && window.WebGLRenderingContext) {
       character.rotation.y = 0;
 
       characterGroup.add(character);
+
+      /* ---- Sunglasses, parented to the head bone ---- */
+      if (headBone) {
+        const glasses = createSunglasses();
+        glasses.position.set(0, 0.028, 0.1);
+        glasses.scale.setScalar(0.025);
+        headBone.add(glasses);
+      }
 
       /* ---- Headphones, parented to the head bone ---- */
       if (headBone) {
