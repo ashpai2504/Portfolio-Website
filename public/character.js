@@ -155,38 +155,42 @@ if (container && window.WebGLRenderingContext) {
   /* ---- Sunglasses factory: wayfarer-style geometry parented to head bone ---- */
   function createSunglasses() {
     const g = new THREE.Group();
+    // DoubleSide so glasses are visible even when camera clips through them slightly
     const lensMat = new THREE.MeshStandardMaterial({
       color: 0x06060f,
-      metalness: 0.25,
+      metalness: 0.3,
       roughness: 0.05,
       transparent: true,
-      opacity: 0.92,
+      opacity: 0.88,
+      side: THREE.DoubleSide,
+      depthWrite: false,
     });
     const frameMat = new THREE.MeshStandardMaterial({
       color: 0x1a1a1c,
       metalness: 0.85,
-      roughness: 0.18,
+      roughness: 0.2,
+      side: THREE.DoubleSide,
     });
-    const rx = 1.05, ry = 0.72, lx = 1.3;
-    const lensGeo = new THREE.CylinderGeometry(1, 1, 0.14, 32);
+    const rx = 0.85, ry = 0.6, lx = 1.0;
+    const lensGeo = new THREE.CylinderGeometry(1, 1, 0.12, 32);
     [-1, 1].forEach(side => {
       const lens = new THREE.Mesh(lensGeo, lensMat);
       lens.rotation.x = Math.PI / 2;
       lens.scale.set(rx, ry, 1);
       lens.position.set(side * lx, 0, 0);
       g.add(lens);
-      const frame = new THREE.Mesh(new THREE.TorusGeometry(1, 0.09, 8, 32), frameMat);
+      const frame = new THREE.Mesh(new THREE.TorusGeometry(1, 0.07, 8, 32), frameMat);
       frame.scale.set(rx, ry, 1);
       frame.position.set(side * lx, 0, 0.02);
       g.add(frame);
     });
-    const bridge = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, (lx - rx) * 2, 6), frameMat);
+    const bridge = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, (lx - rx) * 2, 6), frameMat);
     bridge.rotation.z = Math.PI / 2;
     g.add(bridge);
     [-1, 1].forEach(side => {
-      const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.04, 2.6, 6), frameMat);
+      const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.03, 2.2, 6), frameMat);
       arm.rotation.z = Math.PI / 2;
-      arm.position.set(side * (lx + rx + 2.6 / 2 + 0.05), 0, -0.08);
+      arm.position.set(side * (lx + rx + 2.2 / 2 + 0.05), 0, -0.1);
       g.add(arm);
     });
     return g;
@@ -243,9 +247,19 @@ if (container && window.WebGLRenderingContext) {
 
       /* ---- Sunglasses, parented to the head bone ---- */
       if (headBone) {
+        // The GLTF HumanArmature node has scale=100 (confirmed from GLB JSON).
+        // Accumulated world scale: armature(100) × character(charScale) × group(HERO_SCENE_SCALE).
+        // All other bones in the chain have scale≈1, so this is exact.
+        const WS = 100 * charScale * HERO_SCENE_SCALE; // ≈ 34.16
+
         const glasses = createSunglasses();
-        glasses.position.set(0, 0.028, 0.1);
-        glasses.scale.setScalar(0.025);
+        // Geometry span (lens-to-lens): 2*(lx + rx) = 2*(1.0+0.85) = 3.7 local units.
+        // Target 11 cm world width → local scale = 0.11 / (3.7 × 34.16) ≈ 0.000873
+        const GEOM_SPAN = 3.7;
+        glasses.scale.setScalar(0.11 / (GEOM_SPAN * WS));
+        // Eyes: ~3 cm above head-bone root (eye-level), ~8 cm forward (clear of face mesh).
+        // Divide world offsets by WS to convert to bone-local units.
+        glasses.position.set(0, 0.03 / WS, 0.08 / WS);
         headBone.add(glasses);
       }
 
