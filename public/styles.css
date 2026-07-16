@@ -158,55 +158,48 @@ ul{list-style:none}
   margin:0;
   font-family:'Inter',sans-serif;
   font-weight:700;
-  font-size:clamp(1.6rem,3vw,3.2rem);
+  font-size:clamp(1.25rem,2.4vw,2.4rem);
   letter-spacing:.04em;
   line-height:1.05;
   text-transform:uppercase;
   position:relative;
   display:block;
 }
-/* Row 1: AI / Full-Stack (gradient). Row 2: Engineer / Developer.
-   Both rows work the same way: the two words are stacked in one slot and
-   cross-fade, so different-length words never reflow or overlap-garble. */
+/* Two stacked rows rotate together through 3 phrases:
+   AI Engineer  ->  Full-Stack Developer  ->  Product Builder.
+   Row 1 (lead word) carries the gradient; row 2 (sub word) is light.
+   Each row holds all 3 words absolutely stacked in one slot, so different
+   word lengths never reflow, and only the active state cross-fades in. */
 .landing-info-h2{
-  font-size:clamp(2rem,4vw,4.2rem)!important;
+  font-size:clamp(1.6rem,3.1vw,3.2rem)!important;
   min-height:1.1em;
 }
 .landing-info-h2-row{
   min-height:1.15em;
 }
-.landing-h2-1,.landing-h2-2,.landing-h2-info,.landing-h2-info-1{
+.role-word{
   display:inline-block;
   position:absolute;
   left:0;
   top:0;
   white-space:nowrap;
+  opacity:0;
+  transition:opacity .3s ease;
 }
-/* Row 1 words carry the gradient directly so the fill shows regardless of
-   which word is currently positioned in the slot. */
-.landing-h2-1,.landing-h2-2{
+/* Lead words (AI / Full-Stack / Product) carry the gradient directly so the
+   fill shows regardless of which word occupies the slot. */
+.role-lead{
   color:#22d3ee;
   background:linear-gradient(135deg,#22d3ee 0%,#9b6dff 100%);
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
 }
-/* Words shown by default (AI / Engineer): fade out immediately on toggle,
-   fade back in with a short delay so they never overlap the other word. */
-.landing-h2-1,.landing-h2-info{
-  opacity:1;
-  transition:opacity .3s ease .25s;
-}
-.landing-info.toggle .landing-h2-1,.landing-info.toggle .landing-h2-info{
-  opacity:0;
-  transition:opacity .3s ease;
-}
-/* Words hidden by default (Full-Stack / Developer): mirror of the above. */
-.landing-h2-2,.landing-h2-info-1{
-  opacity:0;
-  transition:opacity .3s ease;
-}
-.landing-info.toggle .landing-h2-2,.landing-info.toggle .landing-h2-info-1{
+/* Only the word matching the current state is visible; it fades in with a
+   short delay so the outgoing word clears first (no overlap-garble). */
+.landing-info.state-0 .role-word[data-state="0"],
+.landing-info.state-1 .role-word[data-state="1"],
+.landing-info.state-2 .role-word[data-state="2"]{
   opacity:1;
   transition:opacity .3s ease .25s;
 }

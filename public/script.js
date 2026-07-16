@@ -344,11 +344,18 @@ gsap.to('.planet', {
   scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1 }
 });
 
-/* Role label toggle (mirrors reference Tech / Business swap) */
+/* Role label rotation: AI Engineer -> Full-Stack Developer -> Product Builder */
 (function initRoleToggle() {
   const info = document.querySelector('.landing-info');
   if (!info) return;
-  setInterval(() => info.classList.toggle('toggle'), 2400);
+  const total = 3;
+  let state = 0;
+  if (!info.classList.contains('state-0')) info.classList.add('state-0');
+  setInterval(() => {
+    info.classList.remove('state-' + state);
+    state = (state + 1) % total;
+    info.classList.add('state-' + state);
+  }, 2600);
 })();
 
 /* About section reveal */
