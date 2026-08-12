@@ -628,7 +628,13 @@ document.querySelectorAll('.timeline-card').forEach(card => {
       scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom 40%', scrub: 1 }
     });
   } else {
-    gsap.to(charEl, {
+    /* fromTo (not to): this runs before character.js's deferred module adds
+       .character-loaded, so the element's live opacity is still 0. A plain
+       .to() would capture that as its "from" value and lock opacity at 0
+       via inline style for the whole scrub range, permanently overriding
+       the later CSS fade-in — which hid the character on every narrow
+       viewport. Pin the "from" explicitly instead of reading the DOM. */
+    gsap.fromTo(charEl, { opacity: 1 }, {
       opacity: 0.0,
       y: '-15%',
       scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1 }
